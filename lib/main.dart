@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Band Name Generator',
-      home: RandomWords(), 
+      theme: ThemeData(
+        primaryColor: Colors.white;
+      ),
+      home: RandomWords(),
     );
   }
 }
@@ -22,6 +25,7 @@ class MyApp extends StatelessWidget {
 class RandomWordsState extends State<RandomWords> {
   // wordpairs
   final _suggestions = <String>[];
+  final Set<String> _saved = Set<String>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
@@ -29,8 +33,43 @@ class RandomWordsState extends State<RandomWords> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Nonsensical Band Names'),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
+        ],
       ),
       body: _buildSuggestions(),
+    );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        // Add 20 lines from here...
+        builder: (BuildContext context) {
+          final Iterable<ListTile> tiles = _saved.map(
+            (String band) {
+              return ListTile(
+                title: Text(
+                  band,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final List<Widget> divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+
+          return Scaffold(
+            // Add 6 lines from here...
+            appBar: AppBar(
+              title: Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        },
+      ), 
     );
   }
 
@@ -42,11 +81,9 @@ class RandomWordsState extends State<RandomWords> {
 
           final index = i ~/ 2; /*3*/
           if (index >= _suggestions.length) {
-
-            
-
             List<String> bands = [];
 
+            // take random combinations of adjectives and nouns
             for (int i = 0; i < 10; i++) {
               var myAdj = randomChoice(adjectives);
               myAdj = myAdj[0].toUpperCase() + myAdj.substring(1);
@@ -64,11 +101,26 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(String band) {
+    final bool alreadySaved = _saved.contains(band);
     return ListTile(
       title: Text(
         band,
         style: _biggerFont,
       ),
+      trailing: Icon(
+        // Add the lines from here...
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ),
+      onTap: () {
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(band);
+          } else {
+            _saved.add(band);
+          }
+        });
+      },
     );
   }
 }
