@@ -1,5 +1,6 @@
 # Band Name Generator
-<img src="screen-1.png" width="48">
-![What is this](screen-1.png)
-![What is this](screen-1.png)
+<img src="screen-1.png" width="23%">
+<img src="screen-1.png" width="23%">
+<img src="screen-1.png" width="23%">
+
 Nonsensical band name generator created with Flutter
